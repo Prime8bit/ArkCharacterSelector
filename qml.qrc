@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SelectListView.qml</file>
+    </qresource>
+    <qresource prefix="/assets">
+        <file>images/logo.png</file>
+    </qresource>
+</RCC>
