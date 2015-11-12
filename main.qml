@@ -12,7 +12,7 @@ Window {
         anchors.fill : parent
 
         Image {
-            id: image1
+            id: logo
             x: 0
             y: 0
             width: 480
