@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Window 2.2
+import CharacterLib 1.0
 
 Window {
     visible: true
@@ -27,6 +28,11 @@ Window {
             height: 369
             color: "#ffffff"
         }
+
+    }
+
+    CharacterManager
+    {
 
     }
 }
