@@ -8,6 +8,7 @@ Window {
     height: 640
 
     Rectangle {
+        color: "#4d4d4d"
         anchors.fill : parent
 
         Image {
@@ -17,22 +18,43 @@ Window {
             width: 480
             height: 122
             fillMode: Image.PreserveAspectFit
-            source: "qrc:/qtquickplugin/images/template_image.png"
+            source: "qrc:/assets/images/logo.png"
         }
 
-        Rectangle {
-            id: rectangle1
-            x: 8
+        CharacterManager
+        {
+            id: characterListModel
+
+        }
+
+        ListView {
+            id: characterList
+            x: 0
             y: 128
-            width: 464
-            height: 369
-            color: "#ffffff"
+            width: 472
+            height: 504
+            model: characterListModel
+            delegate: Item {
+                x: 5
+                width: 80
+                height: 40
+                Row {
+                    id: row1
+                    Rectangle {
+                        width: 40
+                        height: 40
+                        color: "red"
+                    }
+
+                    Text {
+                        text: display
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.bold: true
+                    }
+                    spacing: 10
+                }
+            }
         }
-
-    }
-
-    CharacterManager
-    {
 
     }
 }

@@ -4,8 +4,7 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    CharacterManager.cpp \
-    testlist.cpp
+    CharacterManager.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,6 +15,5 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    CharacterManager.h \
-    testlist.h
+    CharacterManager.h
 

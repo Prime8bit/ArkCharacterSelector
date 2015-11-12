@@ -238,7 +238,7 @@ release\moc_CharacterManager.cpp: C:\Qt\5.5\msvc2013_64\include\QtCore\QAbstract
 		C:\Qt\5.5\msvc2013_64\include\QtCore\QFileSystemWatcher \
 		C:\Qt\5.5\msvc2013_64\include\QtCore\qfilesystemwatcher.h \
 		..\CharacterManager.h
-	C:\Qt\5.5\msvc2013_64\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IC:/Qt/5.5/msvc2013_64/mkspecs/win32-msvc2013 -IC:/Users/Nate/Documents/Programming/ArkCharacterSelector -IC:/Qt/5.5/msvc2013_64/include -IC:/Qt/5.5/msvc2013_64/include/QtQuick -IC:/Qt/5.5/msvc2013_64/include/QtGui -IC:/Qt/5.5/msvc2013_64/include/QtANGLE -IC:/Qt/5.5/msvc2013_64/include/QtQml -IC:/Qt/5.5/msvc2013_64/include/QtNetwork -IC:/Qt/5.5/msvc2013_64/include/QtCore -I. ..\CharacterManager.h -o release\moc_CharacterManager.cpp
+	C:\Qt\5.5\msvc2013_64\bin\moc.exe $(DEFINES) -D_MSC_VER=1800 -D_WIN32 -D_WIN64 -IC:/Qt/5.5/msvc2013_64/mkspecs/win32-msvc2013 -IC:/Users/nthompson/Documents/workspace/ArkCharacterSelector -IC:/Qt/5.5/msvc2013_64/include -IC:/Qt/5.5/msvc2013_64/include/QtQuick -IC:/Qt/5.5/msvc2013_64/include/QtGui -IC:/Qt/5.5/msvc2013_64/include/QtANGLE -IC:/Qt/5.5/msvc2013_64/include/QtQml -IC:/Qt/5.5/msvc2013_64/include/QtNetwork -IC:/Qt/5.5/msvc2013_64/include/QtCore -I. ..\CharacterManager.h -o release\moc_CharacterManager.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
