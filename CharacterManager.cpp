@@ -1,19 +1,18 @@
+#include <fstream>
+#include <sstream>
+#include <vector>
+
 #include "CharacterManager.h"
 
-//for debugging user _characterDir(".");
-//for live user _characterDir("../Saved/SavedArksLocal");
+//for debugging use _characterDir(".");
+//for live use _characterDir("../Saved/SavedArksLocal");
 CharacterManager::CharacterManager(QObject *parent)
     : QAbstractListModel(parent)
     , _characterDir(".")
 {
-    // TODO: Change to correct file extension
-    _characterDir.setNameFilters(QStringList() << "*.txt");
+    _characterDir.setNameFilters(QStringList() << "*.arkprofile");
 
     _watcher.addPath(_characterDir.absolutePath());
-
-    qDebug("Watching: ");
-    foreach (const QString &item, _watcher.directories())
-        qDebug("" + item.toLatin1());
 
     QObject::connect(&_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(updateCharacters(QString)));
     updateCharacters(_characterDir.absolutePath());
@@ -62,18 +61,70 @@ void CharacterManager::updateCharacters(const QString &path)
 
     _characterDir.refresh();
 
+    QStringList fileList = _characterDir.entryList();
+    for (int i = 0; i < fileList.size(); i ++)
+    {
+        QString curFile = fileList.at(i);
+        if (fileList.at(i) == "LocalPlayer.arkprofile")
+        {
+            _currentCharacter = parseLocalPlayer(curFile);
+            fileList.replace(i, _localPlayerName);
+        }
+        else
+        {
+            int lastPeriodIndex = curFile.lastIndexOf(".");
+            fileList.replace(i, curFile.left(lastPeriodIndex));
+        }
+    }
+
     if (_characterDir.count() > 0)
     {
         beginInsertRows(QModelIndex(), 0, _characterDir.count() - 1);
-        _characters = _characterDir.entryList();
+        _characters = fileList;
         endInsertRows();
     }
 }
 
-/**
-void addCharacter(const QString &characterName)
+QString CharacterManager::parseLocalPlayer(const QString &fileName)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    _characters << characterName;
-    endInsertRows();
-}**/
+    std::ifstream input(fileName.toStdString(), std::ios::binary);
+    std::stringstream formattedOutput;
+    bool firstUnused = true;
+    std::vector<std::string> tokens;
+
+    if (input.is_open())
+    {
+        char curChar;
+        while(input.get(curChar))
+        {
+            if (curChar < ' ' || curChar > '~')
+            {
+                if (firstUnused)
+                {
+                    firstUnused = false;
+                    if (formattedOutput.rdbuf()->in_avail() > 0)
+                        tokens.push_back(formattedOutput.str());
+                    formattedOutput.str(std::string());
+                }
+            }
+            else
+            {
+                firstUnused = true;
+                formattedOutput << curChar;
+            }
+        }
+
+        input.close();
+
+        for(std::vector<std::string>::iterator iter = tokens.begin(); iter != tokens.end(); ++iter) {
+            std::string curItem = *iter;
+            if (curItem.compare("PlayerCharacterName") == 0
+                    && ++iter != tokens.end())
+            {
+                return QString::fromStdString(*(++iter));
+            }
+        }
+    }
+
+    return QString("LocalProfile");
+}
