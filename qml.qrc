@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-    </qresource>
-    <qresource prefix="/assets">
+        <file>images/delete.png</file>
         <file>images/logo.png</file>
+        <file>images/play.png</file>
+        <file>images/new.png</file>
     </qresource>
 </RCC>

@@ -5,10 +5,11 @@
 #include <QFileSystemWatcher>
 #include <QDir>
 
+#define CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME "LocalPlayer.arkprofile"
+
 class CharacterManager : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString currentCharacter READ currentCharacter)
 public:
     explicit CharacterManager(QObject *parent = 0);
 
@@ -16,11 +17,11 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    Q_INVOKABLE void PlayAsCharacter(QString &characterName);
-    Q_INVOKABLE void DeleteCharacter(QString &characterName);
+    Q_INVOKABLE void newCharacter();
+    Q_INVOKABLE void playAsCharacter(int index);
+    Q_INVOKABLE void deleteCharacter(int index);
 signals:
     void dataChanged();
-    QString currentCharacter() { return _currentCharacter; }
 
 private:
     QStringList _characters;
@@ -28,7 +29,7 @@ private:
     QDir _characterDir;
     QString _currentCharacter;
 
-    QString parseLocalPlayer(const QString &fileName);
+    QString parseLocalCharacter();
 
 private slots:
     void updateCharacters(const QString &path);

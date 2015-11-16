@@ -1,6 +1,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <QProcess>
+#include <QCoreApplication>
 
 #include "CharacterManager.h"
 
@@ -8,7 +10,7 @@
 //for live use _characterDir("../Saved/SavedArksLocal");
 CharacterManager::CharacterManager(QObject *parent)
     : QAbstractListModel(parent)
-    , _characterDir(".")
+    , _characterDir("../Saved/SavedArksLocal")
 {
     _characterDir.setNameFilters(QStringList() << "*.arkprofile");
 
@@ -47,47 +49,61 @@ QVariant CharacterManager::headerData(int section, Qt::Orientation orientation, 
     return QString("Characters");
 }
 
-
-void CharacterManager::updateCharacters(const QString &path)
+void CharacterManager::newCharacter()
 {
-    // I already have a QDir corresponding to the only path
-    // that will ever be used by this function
-    // Parameter is required for _watcher.directoryChanged
-    Q_UNUSED(path)
+    if (_currentCharacter.length() < 1)
+        _currentCharacter = parseLocalCharacter();
+    if (_characterDir.exists(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
+        _characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile"));
 
-    beginRemoveRows(QModelIndex(), 0, _characters.count());
-    _characters.clear();
-    endRemoveRows();
+    QProcess gameProcess;
+    if(gameProcess.startDetached(".\\ShooterGame.exe"))
+    QCoreApplication::quit();
+}
 
-    _characterDir.refresh();
-
-    QStringList fileList = _characterDir.entryList();
-    for (int i = 0; i < fileList.size(); i ++)
+void CharacterManager::playAsCharacter(int index)
+{
+    if (index > -1
+            && index < _characters.size())
     {
-        QString curFile = fileList.at(i);
-        if (fileList.at(i) == "LocalPlayer.arkprofile")
+        // If the selected character isn't the current character then
+        // we need to swap file names
+        if (_characters.at(index).compare(_currentCharacter) != 0)
         {
-            _currentCharacter = parseLocalPlayer(curFile);
-            fileList.replace(i, _localPlayerName);
-        }
-        else
-        {
-            int lastPeriodIndex = curFile.lastIndexOf(".");
-            fileList.replace(i, curFile.left(lastPeriodIndex));
-        }
-    }
+            if (_characterDir.exists(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
+            {
+                if (_currentCharacter.length() < 1)
+                    _currentCharacter = parseLocalCharacter();
+                _characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile"));
+            }
 
-    if (_characterDir.count() > 0)
-    {
-        beginInsertRows(QModelIndex(), 0, _characterDir.count() - 1);
-        _characters = fileList;
-        endInsertRows();
+            QString newFileName = QString("%1.arkprofile").arg(_characters.at(index));
+            if (_characterDir.exists(newFileName))
+                _characterDir.rename(newFileName, CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME);
+        }
+
+        QProcess gameProcess;
+        if(gameProcess.startDetached(".\\ShooterGame.exe"))
+        QCoreApplication::quit();
     }
 }
 
-QString CharacterManager::parseLocalPlayer(const QString &fileName)
+void CharacterManager::deleteCharacter(int index)
 {
-    std::ifstream input(fileName.toStdString(), std::ios::binary);
+    if (_characters.size() > index && index > -1)
+    {
+        QString characterFile = _characters.at(index);
+        if (characterFile.compare(_currentCharacter) == 0)
+            characterFile = "LocalPlayer";
+        characterFile.append(".arkprofile");
+        if (_characterDir.exists(characterFile))
+            _characterDir.remove(characterFile);
+    }
+}
+
+QString CharacterManager::parseLocalCharacter()
+{
+    std::ifstream input(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, std::ios::binary);
     std::stringstream formattedOutput;
     bool firstUnused = true;
     std::vector<std::string> tokens;
@@ -127,4 +143,43 @@ QString CharacterManager::parseLocalPlayer(const QString &fileName)
     }
 
     return QString("LocalProfile");
+}
+
+void CharacterManager::updateCharacters(const QString &path)
+{
+    // I already have a QDir corresponding to the only path
+    // that will ever be used by this function
+    // Parameter is required for _watcher.directoryChanged
+    Q_UNUSED(path)
+
+    beginRemoveRows(QModelIndex(), 0, _characters.count());
+    _characters.clear();
+    endRemoveRows();
+
+    _characterDir.refresh();
+
+    QStringList fileList = _characterDir.entryList();
+    for (int i = 0; i < fileList.size(); i ++)
+    {
+        QString curFile = fileList.at(i);
+        if (curFile == CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)
+        {
+            _currentCharacter = parseLocalCharacter();
+            fileList.replace(i, _currentCharacter);
+        }
+        else
+        {
+            int lastPeriodIndex = curFile.lastIndexOf(".");
+            fileList.replace(i, curFile.left(lastPeriodIndex));
+        }
+    }
+
+    fileList.sort();
+
+    if (_characterDir.count() > 0)
+    {
+        beginInsertRows(QModelIndex(), 0, _characterDir.count() - 1);
+        _characters = fileList;
+        endInsertRows();
+    }
 }
