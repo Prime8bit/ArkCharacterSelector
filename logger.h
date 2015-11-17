@@ -7,15 +7,13 @@
 class Logger
 {
 public:
-    Logger(const QString &fileName);
-    ~Logger();
+    Logger(const QString &fileName)
+        : _logFile(fileName)
+    {}
 
     void WriteLine(const QString &message);
-    void Close();
 private:
     QFile _logFile;
-    QTextStream _logStream;
-
 };
 
 #endif // LOGGER_H

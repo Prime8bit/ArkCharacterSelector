@@ -19,3 +19,5 @@ HEADERS += \
     CharacterManager.h \
     Logger.h
 
+# For Application Icon - WINDOWS ONLY
+RC_FILE = ArkCharacterSelector.rc

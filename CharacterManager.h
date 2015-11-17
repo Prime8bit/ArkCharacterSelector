@@ -5,6 +5,8 @@
 #include <QFileSystemWatcher>
 #include <QDir>
 
+#include "Logger.h"
+
 #define CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME "LocalPlayer.arkprofile"
 
 class CharacterManager : public QAbstractListModel
@@ -24,6 +26,7 @@ signals:
     void dataChanged();
 
 private:
+    Logger _log;
     QStringList _characters;
     QFileSystemWatcher _watcher;
     QDir _characterDir;

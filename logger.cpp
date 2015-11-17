@@ -1,17 +1,11 @@
 #include "Logger.h"
 
-Logger::~Logger()
+void Logger::WriteLine(const QString &message)
 {
-    if (_logFile != 0)
+    if (_logFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream logStream(&_logFile);
+        logStream << message << "\n";
         _logFile.close();
-}
-
-bool WriteLine(const QString &message)
-{
-
-}
-
-bool Close()
-{
-
+    }
 }

@@ -11,9 +11,11 @@
 CharacterManager::CharacterManager(QObject *parent)
     : QAbstractListModel(parent)
     , _characterDir("../Saved/SavedArksLocal")
+    , _log("ArkCharacterSelector.log")
 {
+    _log.WriteLine("Starting Ark Character Selector.");
     if (!_characterDir.exists())
-        qCritical("ERROR: Directory %s does not exist.", _characterDir.absolutePath().toStdString().c_str());
+        _log.WriteLine(QString("ERROR: Directory %1 does not exist.").arg(_characterDir.absolutePath().toStdString().c_str()));
     _characterDir.setNameFilters(QStringList() << "*.arkprofile");
 
     _watcher.addPath(_characterDir.absolutePath());
@@ -59,7 +61,7 @@ void CharacterManager::newCharacter()
     {
         if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile")))
         {
-            qDebug(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
+            _log.WriteLine(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
             return;
         }
     }
@@ -84,7 +86,7 @@ void CharacterManager::playAsCharacter(int index)
                     _currentCharacter = parseLocalCharacter();
                 if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile")))
                 {
-                    qDebug(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
+                    _log.WriteLine(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
                     return;
                 }
             }
@@ -94,7 +96,7 @@ void CharacterManager::playAsCharacter(int index)
             {
                 if (_characterDir.rename(newFileName, CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
                 {
-                    qDebug(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(newFileName)).toLatin1());
+                    _log.WriteLine(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(newFileName)).toLatin1());
                     return;
                 }
             }
@@ -104,7 +106,7 @@ void CharacterManager::playAsCharacter(int index)
         if(gameProcess.startDetached(".\\ShooterGame.exe"))
             QCoreApplication::quit();
         else
-            qDebug("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
+            _log.WriteLine("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
     }
 }
 
@@ -119,7 +121,7 @@ void CharacterManager::deleteCharacter(int index)
         if (_characterDir.exists(characterFile))
         {
             if (!_characterDir.remove(characterFile))
-                qDebug(QString("ERROR: Unable to delete %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(characterFile)).toLatin1());
+                _log.WriteLine(QString("ERROR: Unable to delete %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(characterFile)).toLatin1());
         }
     }
 }
