@@ -7,10 +7,10 @@
 #include "CharacterManager.h"
 
 //for debugging use _characterDir(".");
-//for live use _characterDir("../Saved/SavedArksLocal");
+//for live use _characterDir("../../Saved/SavedArksLocal");
 CharacterManager::CharacterManager(QObject *parent)
     : QAbstractListModel(parent)
-    , _characterDir("../Saved/SavedArksLocal")
+    , _characterDir("../../Saved/SavedArksLocal")
     , _log("ArkCharacterSelector.log")
 {
     _log.WriteLine("Starting Ark Character Selector.");
@@ -128,12 +128,14 @@ void CharacterManager::deleteCharacter(int index)
 
 QString CharacterManager::parseLocalCharacter()
 {
-    std::ifstream input(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, std::ios::binary);
+    std::ifstream input(_characterDir.filePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME).toStdString(), std::ios::binary);
     std::stringstream formattedOutput;
     bool firstUnused = true;
     std::vector<std::string> tokens;
 
-    if (input.is_open())
+    if (!input.is_open())
+        _log.WriteLine(QString("Unable to open %1").arg(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME));
+    else
     {
         char curChar;
         while(input.get(curChar))
@@ -167,7 +169,7 @@ QString CharacterManager::parseLocalCharacter()
         }
     }
 
-    return QString("LocalProfile");
+    return QString("BogusName");
 }
 
 void CharacterManager::updateCharacters(const QString &path)
