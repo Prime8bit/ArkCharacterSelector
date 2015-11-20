@@ -10,6 +10,8 @@ Extract all files into the same folder as the ARK Game executable called "Shoote
     Windows - C:\Program Files (x86)\Steam\steamapps\common\ARK\ShooterGame\binaries
 	Linux - ~/.steam/steam/steamapps/common/ARK/ShooterGame/Binaries/Linux
 	Mac - Are macs even capable of playing ARK: Survival Evolved? Also, I don't own a Mac and have no idea of the location. 
+	
+Windows users will also neet to change the compatibility settings to run as Administrator. The reason for this is that the application can't edit files anywhere in "Program Files (x86)" or "Program files" without admin privileges. It needs this ability to rename your character's files which are located in the directory listed above.
 
 You should now be able to use ArkCharacterSelector.exe to choose characters. If the tool does not work as expected then you may be able to see error info logged in the ArkCharacterSelector.log file.
 
@@ -20,11 +22,11 @@ The map will be the same for all characters allowing you to build bases with one
 
 If the tool does not work as expected then you may be able to see errors logged in the ArkCharacterSelector.log file.
 
-** IMPORTANT: When you switch characters, the last character you used will be found lying unconscious in the place where you logged off. That character can be killed in that state (even by your current character if you are so inclined) and normal death penalties apply... including dropping of loot. Ensure that your characters are in a safe location before switching characters so they aren't killed by random dinos. **
-** IMPORTANT: If you name characters the same name then you may get unexpected results. This utility is not designed to backup a single character, it is designed to allow you to play multiple charcters. **
-** IMPORTANT: You should ensure that ARK: Survival Evolved is not running while using the ARK Character Selector. If you do not then you may get unexpected results. **
+**IMPORTANT: When you switch characters, the last character you used will be found lying unconscious in the place where you logged off. That character can be killed in that state (even by your current character if you are so inclined) and normal death penalties apply... including dropping of loot. Ensure that your characters are in a safe location before switching characters so they aren't killed by random dinos.**
+**IMPORTANT: If you name characters the same name then you may get unexpected results. This utility is not designed to backup a single character, it is designed to allow you to play multiple charcters.**
+**IMPORTANT: You should ensure that ARK: Survival Evolved is not running while using the ARK Character Selector. If you do not then you may get unexpected results.**
 
-** DISCLAIMER: I do not own the rights to the ARK: Survival Evolved name or logo. I am not a member of the ARK: Survival Evolved team. Neither I nor they are responsible for corrupted save data due to the usage of this tool. I do my best to ensure it does not corrupt save data, especially since I use this tool myself, but you use it at your own risk. **
+**DISCLAIMER: I do not own the rights to the ARK: Survival Evolved name or logo. I am not a member of the ARK: Survival Evolved team. Neither I nor they are responsible for corrupted save data due to the usage of this tool. I do my best to ensure it does not corrupt save data, especially since I use this tool myself, but you use it at your own risk.**
 
 ## Build Instructions
 This application was developed with cross-platform capability in mind. It was developed using Qt Creator 3.5.1 using Qt 5.5. It is possible that this application will work with other versions of Qt, but I make no guarantees. The root of the repository is the root of the project.
