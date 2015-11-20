@@ -142,12 +142,14 @@ void CharacterManager::deleteCharacter(int index)
 
 QString CharacterManager::parseLocalCharacter()
 {
-    std::ifstream input(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, std::ios::binary);
+    std::ifstream input(_characterDir.filePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME).toStdString(), std::ios::binary);
     std::stringstream formattedOutput;
     bool firstUnused = true;
     std::vector<std::string> tokens;
 
-    if (input.is_open())
+    if (!input.is_open())
+        _log.WriteLine(QString("Unable to open %1").arg(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME));
+    else
     {
         char curChar;
         while(input.get(curChar))
@@ -181,7 +183,7 @@ QString CharacterManager::parseLocalCharacter()
         }
     }
 
-    return QString("LocalProfile");
+    return QString("BogusName");
 }
 
 void CharacterManager::updateCharacters(const QString &path)
