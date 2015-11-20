@@ -7,16 +7,16 @@
 #include "CharacterManager.h"
 
 //for debugging use _characterDir(".");
-//for live use _characterDir("../Saved/SavedArksLocal");
+//for live use _characterDir("../../Saved/SavedArksLocal");
 CharacterManager::CharacterManager(QObject *parent)
     : QAbstractListModel(parent)
-    , _characterDir("../Saved/SavedArksLocal")
+    , _characterDir("../../Saved/SavedArksLocal")
     , _log("ArkCharacterSelector.log")
 {
     _log.WriteLine("Starting Ark Character Selector.");
     if (!_characterDir.exists())
         _log.WriteLine(QString("ERROR: Directory %1 does not exist.").arg(_characterDir.absolutePath().toStdString().c_str()));
-    _characterDir.setNameFilters(QStringList() << "*.arkprofile");
+    _characterDir.setNameFilters(QStringList() << "*.local.arkprofile");
 
     _watcher.addPath(_characterDir.absolutePath());
 
@@ -59,16 +59,22 @@ void CharacterManager::newCharacter()
         _currentCharacter = parseLocalCharacter();
     if (_characterDir.exists(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
     {
-        if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile")))
+        // I add .local to the name because when ARK doesn't find LocalPlayer.arkprofile, it checks for (CharacterName).arkprofile
+        // We need something that is different from (CharacterName).arkprofile
+        if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".local.arkprofile")))
         {
             _log.WriteLine(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
             return;
         }
     }
 
+    /**
     QProcess gameProcess;
     if(gameProcess.startDetached(".\\ShooterGame.exe"))
-    QCoreApplication::quit();
+        QCoreApplication::quit();
+    else
+        _log.WriteLine("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
+    **/
 }
 
 void CharacterManager::playAsCharacter(int index)
@@ -84,14 +90,14 @@ void CharacterManager::playAsCharacter(int index)
             {
                 if (_currentCharacter.length() < 1)
                     _currentCharacter = parseLocalCharacter();
-                if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".arkprofile")))
+                if (!_characterDir.rename(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME, _currentCharacter.append(".local.arkprofile")))
                 {
                     _log.WriteLine(QString("ERROR: Unable to rename %1. Check your files/permissions and try again.").arg(_characterDir.absoluteFilePath(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)).toLatin1());
                     return;
                 }
             }
 
-            QString newFileName = QString("%1.arkprofile").arg(_characters.at(index));
+            QString newFileName = QString("%1.local.arkprofile").arg(_characters.at(index));
             if (_characterDir.exists(newFileName))
             {
                 if (_characterDir.rename(newFileName, CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
@@ -102,11 +108,13 @@ void CharacterManager::playAsCharacter(int index)
             }
         }
 
+        /**
         QProcess gameProcess;
         if(gameProcess.startDetached(".\\ShooterGame.exe"))
             QCoreApplication::quit();
         else
             _log.WriteLine("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
+            **/
     }
 }
 
@@ -114,9 +122,15 @@ void CharacterManager::deleteCharacter(int index)
 {
     if (_characters.size() > index && index > -1)
     {
-        QString characterFile = _characters.at(index);
+        QString characterFile("");
         if (characterFile.compare(_currentCharacter) == 0)
             characterFile = "LocalPlayer";
+        else
+        {
+            characterFile = _characters.at(index);
+            characterFile.append(".local");
+        }
+
         characterFile.append(".arkprofile");
         if (_characterDir.exists(characterFile))
         {
@@ -187,23 +201,25 @@ void CharacterManager::updateCharacters(const QString &path)
     for (int i = 0; i < fileList.size(); i ++)
     {
         QString curFile = fileList.at(i);
-        if (curFile == CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME)
+        if (curFile.endsWith(".local.arkprofile"))
         {
-            _currentCharacter = parseLocalCharacter();
-            fileList.replace(i, _currentCharacter);
+            // The length of ".local.arkprofile" is 17. We want to trim it off.
+            fileList.replace(i, curFile.left(curFile.length() - 17));
         }
-        else
-        {
-            int lastPeriodIndex = curFile.lastIndexOf(".");
-            fileList.replace(i, curFile.left(lastPeriodIndex));
-        }
+    }
+
+    if (_characterDir.exists(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
+    {
+        _currentCharacter = parseLocalCharacter();
+        qDebug(QString("Updated character = %1").arg(_currentCharacter).toLatin1());
+        fileList.append(_currentCharacter);
     }
 
     fileList.sort();
 
     if (_characterDir.count() > 0)
     {
-        beginInsertRows(QModelIndex(), 0, _characterDir.count() - 1);
+        beginInsertRows(QModelIndex(), 0, fileList.count() - 1);
         _characters = fileList;
         endInsertRows();
     }
