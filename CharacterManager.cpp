@@ -16,7 +16,7 @@ CharacterManager::CharacterManager(QObject *parent)
     _log.WriteLine("Starting Ark Character Selector.");
     if (!_characterDir.exists())
         _log.WriteLine(QString("ERROR: Directory %1 does not exist.").arg(_characterDir.absolutePath().toStdString().c_str()));
-    _characterDir.setNameFilters(QStringList() << "*.local.arkprofile");
+    _characterDir.setNameFilters(QStringList() << "*.local.arkprofile" << CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME);
 
     _watcher.addPath(_characterDir.absolutePath());
 
@@ -68,13 +68,11 @@ void CharacterManager::newCharacter()
         }
     }
 
-    /**
     QProcess gameProcess;
     if(gameProcess.startDetached(".\\ShooterGame.exe"))
         QCoreApplication::quit();
     else
         _log.WriteLine("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
-    **/
 }
 
 void CharacterManager::playAsCharacter(int index)
@@ -108,13 +106,11 @@ void CharacterManager::playAsCharacter(int index)
             }
         }
 
-        /**
         QProcess gameProcess;
         if(gameProcess.startDetached(".\\ShooterGame.exe"))
             QCoreApplication::quit();
         else
             _log.WriteLine("ERROR: Unable to start ARK: Survival Evolved. Ensure that ArkCharacterSelector exists in the same directory as the ShooterGame executable.");
-            **/
     }
 }
 
@@ -200,6 +196,7 @@ void CharacterManager::updateCharacters(const QString &path)
     _characterDir.refresh();
 
     QStringList fileList = _characterDir.entryList();
+
     for (int i = 0; i < fileList.size(); i ++)
     {
         QString curFile = fileList.at(i);
@@ -208,13 +205,11 @@ void CharacterManager::updateCharacters(const QString &path)
             // The length of ".local.arkprofile" is 17. We want to trim it off.
             fileList.replace(i, curFile.left(curFile.length() - 17));
         }
-    }
-
-    if (_characterDir.exists(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME))
-    {
-        _currentCharacter = parseLocalCharacter();
-        qDebug(QString("Updated character = %1").arg(_currentCharacter).toLatin1());
-        fileList.append(_currentCharacter);
+        else if (curFile.compare(CHARACTERMANAGER_CURRENT_CHARACTER_FILENAME) == 0)
+        {
+            _currentCharacter = parseLocalCharacter();
+            fileList.replace(i, _currentCharacter);
+        }
     }
 
     fileList.sort();
