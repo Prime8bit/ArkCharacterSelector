@@ -11,7 +11,7 @@ Extract all files into the same folder as the ARK Game executable called "Shoote
 	Linux - ~/.steam/steam/steamapps/common/ARK/ShooterGame/Binaries/Linux
 	Mac - Are macs even capable of playing ARK: Survival Evolved? Also, I don't own a Mac and have no idea of the location. 
 	
-Windows users will also neet to change the compatibility settings to run as Administrator. The reason for this is that the application can't edit files anywhere in "Program Files (x86)" or "Program files" without admin privileges. It needs this ability to rename your character's files which are located in the directory listed above.
+Windows users will also neet to change the compatibility settings to run as Administrator. The reason for this is that the application can't edit files anywhere in "Program Files (x86)" or "Program files" without admin privileges. It needs this ability to rename your character's files.
 
 You should now be able to use ArkCharacterSelector.exe to choose characters. If the tool does not work as expected then you may be able to see error info logged in the ArkCharacterSelector.log file.
 
