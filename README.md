@@ -36,7 +36,7 @@ This application was developed with cross-platform capability in mind. It was de
 1. Open project.
 2. Build project.
 
-There isn't anything complicated about the build procedure. The application assumes that all save files are located in the relative directory "../Saved/SavedArksLocal" and that the location of ShooterGame.exe is in the same directory as the application.
+There isn't anything complicated about the build procedure. The application assumes that all save files are located in the relative directory "../../Saved/SavedArksLocal" and that the location of ShooterGame.exe is in the same directory as the application.
 
 ## License
 ARK Character Selector uses the MIT license. See LICENSE for details.
